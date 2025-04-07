@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>GIM</title>
+		<style>
+			body { margin: 0; }
+
+            #canvasContainer {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            #guiContainer {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100vw;
+            }
+
+            .bottompanel {
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .vitalspanel {
+                width: 100px;
+            }
+
+            .vital {
+                position: relative;
+                width: 100%;
+                height: 20px;
+            }
+
+            .vital .meter {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+            }
+
+            .vital .number {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                color: #fff;
+            }
+
+            .vital#healthbar .meter {
+                background-color: #35b35b;
+            }
+
+            .vital#powerbar .meter {
+                background-color: #333fb0;
+            }
+
+            .meter {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #ddd;
+            }
+
+            .number {
+                position: absolute;
+            }
+
+            .skillpanel {
+                display: flex;
+                justify-content: flex-end;
+            }
+		</style>
+	</head>
+	<body>
+		<script type="module" src="/js/main.js"></script>
+        <div id="canvasContainer"></div>
+        <div id="guiContainer">
+            <div class="bottompanel">
+                <div class="vitalspanel">
+                    <div class="vital" id="healthbar">
+                        <div class="meter"></div>
+                        <div class="number"></div>
+                    </div>
+                    <div class="vital" id="powerbar">
+                        <div class="meter"></div>
+                        <div class="number"></div>
+                    </div>
+                </div>
+                <div class="skillpanel">
+                    <button type="button" class="skill" data-skill="4">A4</button>
+                    <button type="button" class="skill" data-skill="2">A2</button>
+                    <div>
+                        <button type="button" class="move" data-side="-2">DL</button>
+                        <button type="button" class="move" data-side="-1">Left</button>
+                    </div>
+                    <div>
+                        <button type="button" class="move" data-move="2">DF</button>
+                        <button type="button" class="move" data-move="1">Forward</button>
+                        <button type="button" class="skill main" data-skill="0">A</button>
+                        <button type="button" class="move" data-move="-1">Back</button>
+                        <button type="button" class="move" data-move="-2">DB</button>
+                    </div>
+                    <div>
+                        <button type="button" class="move" data-side="1">Right</button>
+                        <button type="button" class="move" data-side="2">DR</button>
+                    </div>
+                    <button type="button" class="skill" data-skill="1">A1</button>
+                    <button type="button" class="skill" data-skill="3">A3</button>
+                </div>
+            </div>
+        </div>
+	</body>
+</html>
