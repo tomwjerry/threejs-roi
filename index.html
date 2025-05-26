@@ -1,30 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>GIM</title>
-		<style>
-			body { margin: 0; }
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" >
+
+        <title>GIM</title>
+        <style>
+            body { margin: 0; }
 
             #canvasContainer {
                 width: 100vw;
                 height: 100vh;
             }
 
-            #guiContainer {
+            #phonesimulator {
+                pointer-events: none;
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 100vw;
+                display: flex;
+                justify-content: center;
+                overflow: hidden;
+            }
+
+            #phonesimulator .frame {
+                position: relative;
+                height: calc(100% - 2px);
+                aspect-ratio: 9/16;
+                border: 1px solid rgba(90, 255, 100, 0.6);
+            }
+
+            .movepanel {
+                display: grid;
+                /* 3 x 3 grid */
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(3, 1fr);
                 position: absolute;
                 bottom: 0;
                 left: 0;
-                width: 100vw;
+                width: 120px;
+                height: 120px;
             }
 
-            .bottompanel {
-                display: flex;
-                justify-content: flex-end;
+            .movepanel .move {
+                border: 1px solid #c0c0c0;
+                pointer-events: all;
+            }
+
+            .movepanel .move[data-move='forward'] {
+                border-radius: 50% 50% 0 0;
+                /* Three top colums */
+                grid-column: 1 / 4;
+                grid-row: 1 / 3;
+                -webkit-clip-path: polygon(100% 0, 0 0, 50% 75%);
+                clip-path: polygon(100% 0, 0 0, 50% 75%);
+            }
+
+            .movepanel .move[data-move='left'] {
+                border-radius: 50% 0 0 50%;
+                /* Three top colums */
+                grid-column: 1 / 3;
+                grid-row: 1 / 4;
+                -webkit-clip-path: polygon(75% 50%, 0 0, 0 100%);
+                clip-path: polygon(75% 50%, 0 0, 0 100%);
+            }
+
+            .movepanel .move[data-move='right'] {
+                border-radius: 0 50% 50% 0;
+                /* Three top colums */
+                grid-column: 2 / 4;
+                grid-row: 1 / 4;
+                -webkit-clip-path: polygon(100% 0, 25% 50%, 100% 100%);
+                clip-path: polygon(100% 0, 25% 50%, 100% 100%);
+            }
+
+            .movepanel .move[data-move='backward'] {
+                border-radius: 0 0 50% 50%;
+                /* Three top colums */
+                grid-column: 1 / 4;
+                grid-row: 2 / 4;
+                -webkit-clip-path: polygon(50% 25%, 0 100%, 100% 100%);
+                clip-path: polygon(50% 25%, 0 100%, 100% 100%);
+            }
+
+            .skillpanel {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+            }
+
+            .skillpanel .placement {
+                position: relative;
+            }
+
+            .skillpanel .placement .skill {
+                position: absolute;
+                pointer-events: all;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                border: 1px solid #c0c0c0;
+            }
+
+            .skillpanel .placement .skill[data-skill='0'] {
+                width: 90px;
+                height: 90px;
+                bottom: 0;
+                right: 0;
+            }
+
+            .skillpanel .placement .skill[data-skill='1'] {
+                bottom: 90px;
+                right: 0;
+            }
+
+            .skillpanel .placement .skill[data-skill='2'] {
+                bottom: 84px;
+                right: 50px;
+            }
+
+            .skillpanel .placement .skill[data-skill='3'] {
+                bottom: 50px;
+                right: 86px;
+            }
+
+            .skillpanel .placement .skill[data-skill='4'] {
+                bottom: 0;
+                right: 90px;
             }
 
             .vitalspanel {
-                width: 100px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
             }
 
             .vital {
@@ -58,30 +168,40 @@
                 background-color: #333fb0;
             }
 
-            .meter {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: #ddd;
-            }
+            @media (max-width: 400px) {
+                #phonesimulator {
+                    position: static;
+                }
 
-            .number {
-                position: absolute;
+                #phonesimulator .frame {
+                    position: static;
+                    height: 100%;
+                    aspect-ratio: 1;
+                }
             }
-
-            .skillpanel {
-                display: flex;
-                justify-content: flex-end;
-            }
-		</style>
-	</head>
-	<body>
-		<script type="module" src="/js/main.js"></script>
+        </style>
+    </head>
+    <body>
+        <script type="module" src="/js/main.js"></script>
         <div id="canvasContainer"></div>
-        <div id="guiContainer">
-            <div class="bottompanel">
+
+        <div id="phonesimulator">
+            <div class="frame" id="guiContainer">
+                <div class="movepanel">
+                    <button type="button" class="move" data-move="left">←</button>
+                    <button type="button" class="move" data-move="forward">↑</button>
+                    <button type="button" class="move" data-move="backward">↓</button>
+                    <button type="button" class="move" data-move="right">→</button>
+                </div>
+                <div class="skillpanel">
+                    <div class="placement">
+                        <button type="button" class="skill" data-skill="4">A4</button>
+                        <button type="button" class="skill" data-skill="2">A2</button>
+                        <button type="button" class="skill main" data-skill="0">A</button>
+                        <button type="button" class="skill" data-skill="1">A1</button>
+                        <button type="button" class="skill" data-skill="3">A3</button>
+                    </div>
+                </div>
                 <div class="vitalspanel">
                     <div class="vital" id="healthbar">
                         <div class="meter"></div>
@@ -91,27 +211,6 @@
                         <div class="meter"></div>
                         <div class="number"></div>
                     </div>
-                </div>
-                <div class="skillpanel">
-                    <button type="button" class="skill" data-skill="4">A4</button>
-                    <button type="button" class="skill" data-skill="2">A2</button>
-                    <div>
-                        <button type="button" class="move" data-side="-2">DL</button>
-                        <button type="button" class="move" data-side="-1">Left</button>
-                    </div>
-                    <div>
-                        <button type="button" class="move" data-move="2">DF</button>
-                        <button type="button" class="move" data-move="1">Forward</button>
-                        <button type="button" class="skill main" data-skill="0">A</button>
-                        <button type="button" class="move" data-move="-1">Back</button>
-                        <button type="button" class="move" data-move="-2">DB</button>
-                    </div>
-                    <div>
-                        <button type="button" class="move" data-side="1">Right</button>
-                        <button type="button" class="move" data-side="2">DR</button>
-                    </div>
-                    <button type="button" class="skill" data-skill="1">A1</button>
-                    <button type="button" class="skill" data-skill="3">A3</button>
                 </div>
             </div>
         </div>

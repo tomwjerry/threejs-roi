@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "bitecs": "NateTheGreatt/bitECS#rc-0-4-0",
     "three": "^0.171.0"
   },
   "devDependencies": {
+    "jshint": "^2.13.6",
     "vite": "^6.0.6"
   }
 }

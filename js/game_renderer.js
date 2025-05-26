@@ -1,9 +1,13 @@
+'use strict';
+
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
 export default class GameRenderer {
     positionSystem;
+    statsSystem;
 
     gltfloader = new GLTFLoader;
 
@@ -11,6 +15,7 @@ export default class GameRenderer {
 
     scene;
     renderer;
+    guiRenderer;
     camera;
 
     orbitControls;
@@ -26,11 +31,13 @@ export default class GameRenderer {
         rotY: 0
     };
     
-
     temp = new THREE.Vector3;
     a = new THREE.Vector3;
     coronaSafetyDistance = 3.0;
 
+    /**
+     * Sets stuff up
+     */
     init(positionSystem) {
         this.positionSystem = positionSystem;
 
@@ -40,9 +47,15 @@ export default class GameRenderer {
         this.renderer = new THREE.WebGLRenderer;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
-        this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement);
-
         document.getElementById('canvasContainer').appendChild(this.renderer.domElement);
+
+        this.guiRenderer = new CSS2DRenderer;
+        this.guiRenderer.setSize(window.innerWidth, window.innerHeight);
+        this.guiRenderer.domElement.style.position = 'absolute';
+        this.guiRenderer.domElement.style.top = '0px';
+        document.getElementById('canvasContainer').appendChild(this.guiRenderer.domElement);
+
+        this.orbitControls = new OrbitControls(this.camera, this.guiRenderer.domElement);
 
         const light = new THREE.AmbientLight(0xffffff);
         this.scene.add(light);
@@ -69,6 +82,11 @@ export default class GameRenderer {
         this.gltfloader.setPath('meshes/');
     }
 
+    /**
+     * Loads a gLTF mesh, returns a promise when done
+     * @param {*} mesh 
+     * @returns 
+     */
     loadMesh(mesh) {
         const gameRen = this;
         return new Promise(function (resolve, reject) {
@@ -82,6 +100,12 @@ export default class GameRenderer {
         });
     }
 
+    /**
+     * Add gLFT to the scene, why not use loadMesh?
+     * @param {*} identifier 
+     * @param {*} mesh 
+     * @returns 
+     */
     addRenderable(identifier, mesh) {
         const gameRen = this;
         return new Promise(function(resolve, reject) {
@@ -99,6 +123,20 @@ export default class GameRenderer {
         });
     }
 
+    /**
+     * Add a DOM element to the scene, following the identifier
+     */
+    addDOM(domElement, identifier) {
+        const label = new CSS2DObject(domElement);
+        this.scene.add(label);
+        gameRen.characterMap.get(identifier).add(label);
+        earthLabel.layers.set(0);
+    }
+
+    /**
+     * Tell camera to follow a character
+     * @param {*} identifier 
+     */
     setCameraFollow(identifier) {
         if (this.characterMap.has(identifier)) {
             this.characterMap.get(identifier).add(this.follow);
@@ -107,6 +145,10 @@ export default class GameRenderer {
         }
     }
 
+    /**
+     * Remove something from the scene, identified by entity
+     * @param {*} identifier 
+     */
     removeRenderable(identifier) {
         if (this.characterMap.has(identifier)) {
             this.scene.remove(this.characterMap.get(identifier));
@@ -114,13 +156,10 @@ export default class GameRenderer {
         }
     }
 
-    playerMove(ckeys) {
-        //this.keys.forward = ckeys.forward;
-        //this.keys.backward = ckeys.backward;
-        //this.keys.left = ckeys.left;
-        //this.keys.right = ckeys.right;
-    }
-
+    /**
+     * Move the camera
+     * @param {*} ckeys
+     */
     cameraMove(ckeys) {
         /*this.goal.rotateY(ckeys.rotX * -0.01);
         let newXRot = this.goal.rotation.x - ckeys.rotY * 0.01;
@@ -134,6 +173,9 @@ export default class GameRenderer {
         this.goal.rotation.z = 0;*/
     }
 
+    /**
+     * Animate the scene, move things, update camera, render
+     */
     animate() {
         for (const [charkey, character] of this.characterMap.entries()) {
             const posRot = this.positionSystem.get(charkey);
@@ -165,5 +207,6 @@ export default class GameRenderer {
         this.orbitControls.update();
 
         this.renderer.render(this.scene, this.camera);
+        this.guiRenderer.render(this.scene, this.camera);
     }
 };

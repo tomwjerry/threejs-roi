@@ -1,4 +1,6 @@
-import { Vector3 } from "three";
+'use strict';
+
+import { Vector3 } from 'three';
 
 const thinkSpeed = 200;
 const AIDecisions = Object.freeze({
@@ -10,16 +12,13 @@ const AIDecisions = Object.freeze({
 
 export default class SimpleAI {
     enemies = [];
-    target = null;
     you = null;
-    battleGameplay = null;
     chooseSkill = null;
-    positionSystem = null;
     lastThink = 0;
     decision = AIDecisions.Idle;
     nextDecision = AIDecisions.Idle;
 
-    start(enemies, you, battleGameplay, positionSystem) {
+    start(world, entity, enemies) {
         this.enemies = enemies;
         // Casually choose a target
         this.target = enemies[Math.floor(Math.random() * enemies.length)];
